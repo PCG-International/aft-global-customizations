@@ -1,0 +1,124 @@
+regions:
+  # add `global` here to include IAM entities to be nuked
+  - TARGET_REGION # will be overridden during run time based on region parameter
+
+account-blocklist:
+- 123456789012 #prod
+
+resource-types:
+  excludes:
+  - CloudWatchEventsRule
+  - CloudWatchEventsBuses
+  - CloudWatchLogsLogGroup
+
+feature-flags:
+  disable-deletion-protection:
+    RDSInstance: true
+    EC2Instance: true
+    CloudformationStack: true
+  force-delete-lightsail-addons: true
+
+accounts:
+  ACCOUNT: # will be overridden during run time based on account param
+    filters:
+      S3Bucket:
+      - type: "contains"
+        value: "bucketnuke"
+      S3Object:
+      - type: "contains"
+        value: "nuke_config_update"
+      - type: "contains"
+        value: "nuke_generic_config"
+      SFNStateMachine:
+      - type: "contains"
+        value: "nuke-account-cleanser"
+      CodeBuildProject:
+      - type: "contains"
+        value: "AccountNuker"
+      IAMUser:
+      - "admin"
+      - type: regex
+        value: ".*"
+      IAMUserPolicyAttachment:
+      - property: RoleName
+        value: "admin"
+      IAMUserAccessKey:
+      - property: UserName
+        value: "admin"
+      SQSQueue: [] # delete all SQS
+      IAMSAMLProvider:
+        - type: "regex"
+          value: "AWSSSO_.*_DO_NOT_DELETE"
+      CloudTrailTrail:
+        - type: "contains"
+          value: "aws-controltower"
+      CloudWatchEventsRule:
+        - type: "contains"
+          value: "aws-controltower"
+      EC2VPCEndpoint:
+        - type: "contains"
+          value: "aws-controltower"
+      EC2VPC:
+        - type: "contains"
+          value: "aws-controltower"
+      OpsWorksUserProfile:
+        - type: "contains"
+          value: "AWSControlTowerExecution"
+      CloudWatchLogsLogGroup:
+        - type: "contains"
+          value: "aws-controltower"
+        - type: "contains"
+          value: "AWSControlTowerBP"
+      CloudWatchEventsTarget:
+        - type: "contains"
+          value: "aws-controltower"
+      SNSSubscription:
+        - type: regex
+          value: ".*"
+      SNSTopic:
+        - type: "contains"
+          value: "aws-controltower"
+      EC2Subnet:
+        - type: "contains"
+          value: "aws-controltower"
+      ConfigServiceDeliveryChannel:
+        - type: "contains"
+          value: "aws-controltower"
+      ConfigServiceConfigurationRecorder:
+        - type: "contains"
+          value: "aws-controltower"
+      CloudFormationStack:
+        - type: "contains"
+          value: "AWSControlTower"
+      EC2RouteTable:
+        - type: "contains"
+          value: "aws-controltower"
+      LambdaFunction:
+        - type: "contains"
+          value: "aws-controltower"
+        - type: "contains"
+          value: "member_deprecation"
+        - type: "contains"
+          value: "termination_flag"
+      EC2DHCPOption:
+        - type: "contains"
+          value: "aws-controltower"
+      IAMRole:
+        - type: "contains"
+          value: "aws-controltower"
+        - type: "contains"
+          value: "AWSControlTower"
+        - type: "glob"
+          value: "AWSReservedSSO_*"
+        - type: regex
+          value: ".*"
+      IAMRolePolicyAttachment:
+        - type: "contains"
+          value: "aws-controltower"
+        - type: "contains"
+          value: "AWSControlTower"
+        - type: "glob"
+          value: "AWSReservedSSO_*"
+      IAMRolePolicy:
+        - type: "contains"
+          value: "aws-controltower"
